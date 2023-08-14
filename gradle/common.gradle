@@ -1,0 +1,50 @@
+apply plugin: 'java'
+
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    maven {
+        name = "beastRepository"
+        url "https://maven.beast.dev/releases"
+        credentials(PasswordCredentials)
+        authentication {
+            register("basic", BasicAuthentication)
+        }
+    }
+}
+
+dependencies {
+    annotationProcessor "com.google.auto.service:auto-service:$auto_service_version"
+    compileOnly "com.google.auto.service:auto-service:$auto_service_version"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+}
+
+java.toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+}
+
+// Helper function to add a dependency for another project
+// Configures build dependencies and all the other stuff loom doesn't do
+ext.dependFabric = { String type, String projectName, boolean includeJar = false ->
+    dependencies {
+        var project = project(path: projectName, configuration: 'namedElements')
+        add type, project
+        if (includeJar) {
+            include(project)
+        }
+    }
+
+    // Ensure that things that depend on each other are actually built
+    afterEvaluate {
+        classes.dependsOn "${projectName}:classes"
+        processResources.dependsOn "${projectName}:processResources"
+    }
+
+    // Ensure things are built in order
+    remapJar.dependsOn "${projectName}:remapJar"
+    remapSourcesJar.dependsOn "${projectName}:remapSourcesJar"
+}

@@ -1,0 +1,4 @@
+name: eepy
+version: ${version}
+main: dev.bluevista.eepy.Eepy
+api-version: 1.20

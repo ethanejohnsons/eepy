@@ -1,0 +1,27 @@
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    implementation project(':hyperion-api')
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", minecraft_version
+    inputs.property "mod_version", project.version
+    inputs.property "knob_version", knob_version
+    inputs.property "visus_version", visus_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand ([
+                "version": project.version,
+                "minecraft_version": minecraft_version,
+                "mod_version": project.version,
+                "knob_version": knob_version,
+                "visus_version": visus_version
+        ])
+    }
+}

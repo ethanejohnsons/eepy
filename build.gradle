@@ -1,0 +1,29 @@
+plugins {
+    id 'xyz.jpenilla.run-paper' version "2.0.0"
+    id 'java'
+}
+
+version = "${project.plugin_version}+${project.minecraft_version}"
+
+repositories {
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    implementation "io.papermc.paper:paper-api:$minecraft_version-$paper_version"
+}
+
+processResources {
+    inputs.property "version", project.version
+    filteringCharset "UTF-8"
+
+    filesMatching("plugin.yml") {
+        expand "version": project.version
+    }
+}
+
+tasks {
+    runServer {
+        minecraftVersion("$minecraft_version")
+    }
+}
